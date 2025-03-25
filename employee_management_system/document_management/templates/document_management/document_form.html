@@ -1,0 +1,151 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>{{ title }}</h1>
+        <div>
+            <a href="{% url 'document_list' %}" class="btn btn-secondary">Back to Documents</a>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <form method="post" enctype="multipart/form-data" novalidate>
+                {% csrf_token %}
+                
+                {% if form.non_field_errors %}
+                    <div class="alert alert-danger">
+                        {% for error in form.non_field_errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                
+                <div class="mb-3">
+                    <label for="{{ form.title.id_for_label }}" class="form-label">{{ form.title.label }}</label>
+                    {{ form.title }}
+                    {% if form.title.errors %}
+                        <div class="invalid-feedback d-block">
+                            {% for error in form.title.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <div class="mb-3">
+                    <label for="{{ form.description.id_for_label }}" class="form-label">{{ form.description.label }}</label>
+                    {{ form.description }}
+                    {% if form.description.errors %}
+                        <div class="invalid-feedback d-block">
+                            {% for error in form.description.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <div class="mb-3">
+                    <label for="{{ form.category.id_for_label }}" class="form-label">{{ form.category.label }}</label>
+                    {{ form.category }}
+                    {% if form.category.errors %}
+                        <div class="invalid-feedback d-block">
+                            {% for error in form.category.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <div class="mb-3">
+                    <label for="{{ form.file.id_for_label }}" class="form-label">{{ form.file.label }}</label>
+                    {{ form.file }}
+                    {% if form.file.errors %}
+                        <div class="invalid-feedback d-block">
+                            {% for error in form.file.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    {% if document and document.file %}
+                        <div class="form-text">
+                            Current file: {{ document.file.name|slice:"10:" }} ({{ document.file_size_display }})
+                            <br>Leave empty to keep the current file.
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <div class="mb-3 form-check">
+                    {{ form.is_public }}
+                    <label for="{{ form.is_public.id_for_label }}" class="form-check-label">{{ form.is_public.label }}</label>
+                    <div class="form-text">{{ form.is_public.help_text }}</div>
+                    {% if form.is_public.errors %}
+                        <div class="invalid-feedback d-block">
+                            {% for error in form.is_public.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <div class="mb-3" id="accessibleToField">
+                    <label for="{{ form.accessible_to.id_for_label }}" class="form-label">{{ form.accessible_to.label }}</label>
+                    {{ form.accessible_to }}
+                    <div class="form-text">{{ form.accessible_to.help_text }}</div>
+                    {% if form.accessible_to.errors %}
+                        <div class="invalid-feedback d-block">
+                            {% for error in form.accessible_to.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                    <button type="submit" class="btn btn-primary">Save Document</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Add Bootstrap classes to form fields
+    document.addEventListener('DOMContentLoaded', function() {
+        const formControls = document.querySelectorAll('input, select, textarea');
+        formControls.forEach(element => {
+            if (element.type !== 'hidden' && element.type !== 'checkbox' && element.type !== 'file') {
+                element.classList.add('form-control');
+            }
+            if (element.type === 'checkbox') {
+                element.classList.add('form-check-input');
+            }
+            if (element.type === 'file') {
+                element.classList.add('form-control');
+            }
+        });
+        
+        // Toggle accessible_to field visibility based on is_public checkbox
+        const isPublicCheckbox = document.querySelector('#id_is_public');
+        const accessibleToField = document.querySelector('#accessibleToField');
+        
+        function toggleAccessibleToField() {
+            if (isPublicCheckbox.checked) {
+                accessibleToField.style.display = 'none';
+            } else {
+                accessibleToField.style.display = 'block';
+            }
+        }
+        
+        if (isPublicCheckbox && accessibleToField) {
+            toggleAccessibleToField();
+            isPublicCheckbox.addEventListener('change', toggleAccessibleToField);
+        }
+    });
+</script>
+{% endblock %}

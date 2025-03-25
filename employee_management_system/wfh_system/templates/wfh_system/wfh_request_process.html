@@ -1,0 +1,118 @@
+{% extends 'base.html' %}
+
+{% block title %}Process WFH Request{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Process WFH Request</h1>
+        <div>
+            <a href="{% url 'wfh_request_process_list' %}" class="btn btn-secondary">Back to Requests</a>
+        </div>
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="mb-0">WFH Request Details</h5>
+        </div>
+        <div class="card-body">
+            <div class="row mb-3">
+                <div class="col-md-3 fw-bold">Employee:</div>
+                <div class="col-md-9">{{ wfh_request.user.get_full_name }}</div>
+            </div>
+            
+            <div class="row mb-3">
+                <div class="col-md-3 fw-bold">Date:</div>
+                <div class="col-md-9">{{ wfh_request.date|date:"F d, Y" }}</div>
+            </div>
+            
+            <div class="row mb-3">
+                <div class="col-md-3 fw-bold">Reason:</div>
+                <div class="col-md-9">{{ wfh_request.reason|linebreaks }}</div>
+            </div>
+            
+            <div class="row mb-3">
+                <div class="col-md-3 fw-bold">Status:</div>
+                <div class="col-md-9">
+                    {% if wfh_request.status == 'pending' %}
+                        <span class="badge bg-warning text-dark">Pending</span>
+                    {% elif wfh_request.status == 'approved' %}
+                        <span class="badge bg-success">Approved</span>
+                    {% else %}
+                        <span class="badge bg-danger">Rejected</span>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="row mb-3">
+                <div class="col-md-3 fw-bold">Requested On:</div>
+                <div class="col-md-9">{{ wfh_request.created_at|date:"F d, Y - H:i" }}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">Process Request</h5>
+        </div>
+        <div class="card-body">
+            <form method="post">
+                {% csrf_token %}
+                
+                <div class="mb-3">
+                    <label class="form-label">Action</label>
+                    <div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="{{ form.action.name }}" id="action_approve" value="approved" required>
+                            <label class="form-check-label" for="action_approve">Approve</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="{{ form.action.name }}" id="action_reject" value="rejected" required>
+                            <label class="form-check-label" for="action_reject">Reject</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mb-3" id="rejection_reason_group" style="display: none;">
+                    <label for="{{ form.rejection_reason.id_for_label }}" class="form-label">Rejection Reason</label>
+                    <textarea class="form-control" id="{{ form.rejection_reason.id_for_label }}" name="{{ form.rejection_reason.name }}" rows="3"></textarea>
+                    <div class="form-text">Please provide a reason for rejecting this request.</div>
+                </div>
+                
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const actionApprove = document.getElementById('action_approve');
+        const actionReject = document.getElementById('action_reject');
+        const rejectionReasonGroup = document.getElementById('rejection_reason_group');
+        
+        function toggleRejectionReason() {
+            if (actionReject.checked) {
+                rejectionReasonGroup.style.display = 'block';
+            } else {
+                rejectionReasonGroup.style.display = 'none';
+            }
+        }
+        
+        actionApprove.addEventListener('change', toggleRejectionReason);
+        actionReject.addEventListener('change', toggleRejectionReason);
+        
+        // Initial check
+        toggleRejectionReason();
+    });
+</script>
+{% endblock %}

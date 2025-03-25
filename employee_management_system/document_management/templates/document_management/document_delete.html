@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block title %}Delete Document{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Delete Document</h1>
+        <div>
+            <a href="{% url 'document_detail' document.pk %}" class="btn btn-secondary">Back to Document</a>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header bg-danger text-white">
+            <h5 class="mb-0">Confirm Deletion</h5>
+        </div>
+        <div class="card-body">
+            <p class="lead">Are you sure you want to delete the following document?</p>
+            
+            <div class="alert alert-warning">
+                <h5>{{ document.title }}</h5>
+                <p><strong>File:</strong> {{ document.file.name|slice:"10:" }}</p>
+                <p><strong>Type:</strong> {{ document.file_extension|upper }}</p>
+                <p><strong>Size:</strong> {{ document.file_size_display }}</p>
+                <p><strong>Uploaded by:</strong> {{ document.uploaded_by.get_full_name }}</p>
+                <p><strong>Uploaded on:</strong> {{ document.uploaded_at|date:"F d, Y" }}</p>
+            </div>
+            
+            <p class="text-danger"><strong>Warning:</strong> This action cannot be undone. The document file will be permanently deleted from the server.</p>
+            
+            <form method="post">
+                {% csrf_token %}
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                    <a href="{% url 'document_detail' document.pk %}" class="btn btn-secondary me-md-2">Cancel</a>
+                    <button type="submit" class="btn btn-danger">Delete Document</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block title %}Document Categories{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Document Categories</h1>
+        <div>
+            <a href="{% url 'category_create' %}" class="btn btn-primary">Create Category</a>
+            <a href="{% url 'document_list' %}" class="btn btn-secondary">Back to Documents</a>
+        </div>
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    {% if categories %}
+        <div class="card">
+            <div class="card-header bg-light">
+                <div class="row">
+                    <div class="col-md-5">Name</div>
+                    <div class="col-md-5">Description</div>
+                    <div class="col-md-2">Actions</div>
+                </div>
+            </div>
+            <div class="card-body p-0">
+                <ul class="list-group list-group-flush">
+                    {% for category in categories %}
+                        <li class="list-group-item">
+                            <div class="row align-items-center">
+                                <div class="col-md-5">
+                                    <strong>{{ category.name }}</strong>
+                                </div>
+                                <div class="col-md-5">
+                                    {{ category.description|truncatechars:100 }}
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="btn-group">
+                                        <a href="{% url 'category_edit' category.pk %}" class="btn btn-sm btn-outline-primary">Edit</a>
+                                        <a href="{% url 'category_delete' category.pk %}" class="btn btn-sm btn-outline-danger">Delete</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    {% else %}
+        <div class="alert alert-info">
+            No categories found. <a href="{% url 'category_create' %}">Create a new category</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

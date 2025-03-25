@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+
+{% block title %}Tasks{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Task Management</h1>
+        <div>
+            {% if request.user.is_manager_or_above %}
+                <a href="{% url 'task_create' %}" class="btn btn-primary">Create Task</a>
+            {% else %}
+                <a href="{% url 'personal_task_create' %}" class="btn btn-primary">Create Personal Task</a>
+            {% endif %}
+        </div>
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    {% if assigned_tasks or created_tasks or personal_tasks %}
+        <div class="card">
+            <div class="card-header bg-light">
+                <div class="row">
+                    <div class="col-md-4">Title</div>
+                    <div class="col-md-2">Priority</div>
+                    <div class="col-md-2">Status</div>
+                    <div class="col-md-2">Deadline</div>
+                    <div class="col-md-2">Actions</div>
+                </div>
+            </div>
+            <div class="card-body p-0">
+                <ul class="list-group list-group-flush">
+                    {% for task in assigned_tasks %}
+                        <li class="list-group-item">
+                            <div class="row align-items-center">
+                                <div class="col-md-4">
+                                    <a href="{% url 'task_detail' task.pk %}" class="text-decoration-none">
+                                        {{ task.title }}
+                                        {% if task.is_personal %}<span class="badge bg-info ms-2">Personal</span>{% endif %}
+                                    </a>
+                                </div>
+                                <div class="col-md-2">
+                                    {% if task.priority == 'high' %}
+                                        <span class="badge bg-danger">High</span>
+                                    {% elif task.priority == 'medium' %}
+                                        <span class="badge bg-warning text-dark">Medium</span>
+                                    {% else %}
+                                        <span class="badge bg-success">Low</span>
+                                    {% endif %}
+                                </div>
+                                <div class="col-md-2">
+                                    {% if task.status == 'not_started' %}
+                                        <span class="badge bg-secondary">Not Started</span>
+                                    {% elif task.status == 'in_progress' %}
+                                        <span class="badge bg-primary">In Progress</span>
+                                    {% else %}
+                                        <span class="badge bg-success">Completed</span>
+                                    {% endif %}
+                                </div>
+                                <div class="col-md-2">
+                                    {% if task.deadline %}
+                                        {{ task.deadline|date:"M d, Y" }}
+                                    {% else %}
+                                        <span class="text-muted">No deadline</span>
+                                    {% endif %}
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="btn-group">
+                                        <a href="{% url 'task_complete' task.pk %}" class="btn btn-sm btn-outline-primary">Complete</a>
+                                        <button type="button" class="btn btn-sm btn-outline-primary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <span class="visually-hidden">Toggle Dropdown</span>
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                            <li><a class="dropdown-item" href="{% url 'task_detail' task.pk %}">View Details</a></li>
+                                            {% if request.user.is_manager_or_above or task.is_personal %}
+                                                <li><a class="dropdown-item" href="{% url 'task_update' task.pk %}">Edit</a></li>
+                                                <li><a class="dropdown-item text-danger" href="{% url 'task_delete' task.pk %}">Delete</a></li>
+                                            {% endif %}
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    {% else %}
+        <div class="alert alert-info">
+            No tasks found. 
+            {% if request.user.is_manager_or_above %}
+                <a href="{% url 'task_create' %}" class="btn btn-primary">Create Task</a>
+            {% else %}
+                <a href="{% url 'personal_task_create' %}" class="btn btn-primary">Create Personal Task</a>
+            {% endif %}
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

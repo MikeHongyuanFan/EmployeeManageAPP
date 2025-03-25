@@ -1,0 +1,234 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Manager Dashboard{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/custom.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="profile-header">
+                <div class="container">
+                    <div class="row align-items-center">
+                        <div class="col-md-2 text-center">
+                            {% if user.profile_picture %}
+                                <img src="{{ user.profile_picture.url }}" alt="Profile Picture" class="profile-picture">
+                            {% else %}
+                                <div class="profile-picture-placeholder">
+                                    <i class="bi bi-person"></i>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-7">
+                            <h2>Manager Dashboard</h2>
+                            <p class="text-muted mb-0">{{ user.get_full_name|default:user.username }} | {{ user.get_department_display|default:"No Department" }}</p>
+                            <p class="text-muted mb-0">
+                                <i class="bi bi-people me-1"></i> Managing {{ user.get_managed_employees_count }} employees
+                            </p>
+                        </div>
+                        <div class="col-md-3 text-md-end mt-3 mt-md-0">
+                            <a href="{% url 'profile' %}" class="btn btn-outline-primary">
+                                <i class="bi bi-person-gear me-1"></i> Edit Profile
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-6 mb-4 mb-md-0">
+            <div class="card dashboard-card h-100">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-calendar-minus me-2"></i> Leave Requests to Process
+                    </h5>
+                    <a href="{% url 'leave_request_process_list' %}" class="btn btn-sm btn-outline-light">View All</a>
+                </div>
+                <div class="card-body p-0">
+                    <ul class="list-group list-group-flush">
+                        {% if pending_leave_requests %}
+                            {% for leave in pending_leave_requests %}
+                                <li class="list-group-item">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="mb-1">{{ leave.user.get_full_name }} - {{ leave.get_leave_type_display }}</h6>
+                                            <p class="mb-1 text-muted small">
+                                                {{ leave.start_date|date:"M d, Y" }} - {{ leave.end_date|date:"M d, Y" }}
+                                                ({{ leave.get_days }} days)
+                                            </p>
+                                            <span class="badge status-badge status-{{ leave.status }}">{{ leave.get_status_display }}</span>
+                                        </div>
+                                        <a href="{% url 'leave_request_process' leave.id %}" class="btn btn-sm btn-outline-primary">
+                                            Process
+                                        </a>
+                                    </div>
+                                </li>
+                            {% endfor %}
+                        {% else %}
+                            <li class="list-group-item text-center py-4">
+                                <p class="text-muted mb-0">No pending leave requests to process</p>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card dashboard-card h-100">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-house-door me-2"></i> WFH Requests to Process
+                    </h5>
+                    <a href="{% url 'wfh_request_process_list' %}" class="btn btn-sm btn-outline-light">View All</a>
+                </div>
+                <div class="card-body p-0">
+                    <ul class="list-group list-group-flush">
+                        {% if pending_wfh_requests %}
+                            {% for wfh in pending_wfh_requests %}
+                                <li class="list-group-item">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="mb-1">{{ wfh.user.get_full_name }} - WFH Request</h6>
+                                            <p class="mb-1 text-muted small">
+                                                {{ wfh.date|date:"M d, Y" }}
+                                            </p>
+                                            <span class="badge status-badge status-{{ wfh.status }}">{{ wfh.get_status_display }}</span>
+                                        </div>
+                                        <a href="{% url 'wfh_request_process' wfh.id %}" class="btn btn-sm btn-outline-primary">
+                                            Process
+                                        </a>
+                                    </div>
+                                </li>
+                            {% endfor %}
+                        {% else %}
+                            <li class="list-group-item text-center py-4">
+                                <p class="text-muted mb-0">No pending WFH requests to process</p>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-6 mb-4 mb-md-0">
+            <div class="card dashboard-card h-100">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-check2-square me-2"></i> Assigned Tasks
+                    </h5>
+                    <a href="{% url 'task_list' %}" class="btn btn-sm btn-outline-light">View All</a>
+                </div>
+                <div class="card-body p-0">
+                    <ul class="list-group list-group-flush">
+                        {% if created_tasks %}
+                            {% for task in created_tasks %}
+                                <li class="list-group-item task-list-item {% if task.priority == 'high' %}priority-high{% elif task.priority == 'medium' %}priority-medium{% else %}priority-low{% endif %}">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="mb-1">{{ task.title }}</h6>
+                                            <p class="mb-1 text-muted small">Assigned to: {{ task.assigned_to.get_full_name }}</p>
+                                            <div>
+                                                <span class="badge bg-secondary">{{ task.get_priority_display }}</span>
+                                                <span class="badge bg-info">{{ task.get_status_display }}</span>
+                                                {% if task.deadline %}
+                                                    <span class="badge {% if task.is_overdue %}bg-danger{% else %}bg-info{% endif %}">
+                                                        <i class="bi bi-calendar-event me-1"></i> {{ task.deadline|date:"M d, Y" }}
+                                                    </span>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        <a href="{% url 'task_detail' task.id %}" class="btn btn-sm btn-outline-primary">
+                                            View
+                                        </a>
+                                    </div>
+                                </li>
+                            {% endfor %}
+                        {% else %}
+                            <li class="list-group-item text-center py-4">
+                                <p class="text-muted mb-0">No tasks assigned</p>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </div>
+                <div class="card-footer text-center">
+                    <a href="{% url 'task_create' %}" class="btn btn-sm btn-outline-primary">
+                        <i class="bi bi-plus-circle me-1"></i> Assign New Task
+                    </a>
+                    {% if user.is_hr_or_admin %}
+                    <a href="{% url 'register_manager' %}" class="btn btn-sm btn-outline-primary ms-2">
+                        <i class="bi bi-person-plus me-1"></i> Register New Manager
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card dashboard-card h-100">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-people me-2"></i> Team Members
+                    </h5>
+                </div>
+                <div class="card-body p-0">
+                    <ul class="list-group list-group-flush">
+                        {% if employees %}
+                            {% for employee in employees %}
+                                <li class="list-group-item">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div class="d-flex align-items-center">
+                                            {% if employee.profile_picture %}
+                                                <img src="{{ employee.profile_picture.url }}" alt="Profile" class="rounded-circle me-3" style="width: 40px; height: 40px; object-fit: cover;">
+                                            {% else %}
+                                                <div class="rounded-circle bg-light d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
+                                                    <i class="bi bi-person"></i>
+                                                </div>
+                                            {% endif %}
+                                            <div>
+                                                <h6 class="mb-0">{{ employee.get_full_name }}</h6>
+                                                <p class="mb-0 text-muted small">{{ employee.get_department_display|default:"No Department" }}</p>
+                                            </div>
+                                        </div>
+                                        <div class="dropdown">
+                                            <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton{{ employee.id }}" data-bs-toggle="dropdown" aria-expanded="false">
+                                                Actions
+                                            </button>
+                                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton{{ employee.id }}">
+                                                <li><a class="dropdown-item" href="{% url 'task_create' %}?assigned_to={{ employee.id }}">Assign Task</a></li>
+                                                <li><a class="dropdown-item" href="{% url 'meeting_create' %}?participants={{ employee.id }}">Schedule Meeting</a></li>
+                                                <li><hr class="dropdown-divider"></li>
+                                                <li><a class="dropdown-item" href="#">View Performance</a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </li>
+                            {% endfor %}
+                        {% else %}
+                            <li class="list-group-item text-center py-4">
+                                <p class="text-muted mb-0">No team members assigned to you</p>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            {% include 'dashboard_widgets/calendar_widget.html' %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/main.js' %}"></script>
+{% endblock %}

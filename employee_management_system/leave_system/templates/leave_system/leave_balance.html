@@ -1,0 +1,148 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Leave Balance{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/custom.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h2>Leave Balance</h2>
+            <p class="text-muted">View your current leave balance</p>
+        </div>
+        <div class="col-md-4 text-md-end">
+            <a href="{% url 'leave_request_create' %}" class="btn btn-primary">
+                <i class="bi bi-calendar-plus me-1"></i> New Leave Request
+            </a>
+            <a href="{% url 'leave_request_list' %}" class="btn btn-outline-primary ms-2">
+                <i class="bi bi-list me-1"></i> My Requests
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">Annual Leave</h5>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-3">
+                        <div class="display-4 fw-bold">{{ balance.annual_leave_balance }}</div>
+                        <p class="text-muted">days remaining</p>
+                        <p class="text-muted small">({{ balance.annual_leave_hours }} hours)</p>
+                    </div>
+                    <div class="progress mb-3">
+                        <div class="progress-bar bg-success" role="progressbar" style="width: {{ balance.annual_leave_balance|floatformat:0 }}%;" aria-valuenow="{{ balance.annual_leave_balance|floatformat:0 }}" aria-valuemin="0" aria-valuemax="20">
+                            {{ balance.annual_leave_balance }} / 20
+                        </div>
+                    </div>
+                    <p class="text-muted small">Annual leave can be used for vacations, personal time off, or other planned absences.</p>
+                </div>
+                <div class="card-footer">
+                    <a href="{% url 'leave_request_create' %}" class="btn btn-sm btn-outline-success w-100">
+                        <i class="bi bi-calendar-plus me-1"></i> Request Annual Leave
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">Sick Leave</h5>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-3">
+                        <div class="display-4 fw-bold">{{ balance.sick_leave_balance }}</div>
+                        <p class="text-muted">days remaining</p>
+                        <p class="text-muted small">({{ balance.sick_leave_hours }} hours)</p>
+                    </div>
+                    <div class="progress mb-3">
+                        <div class="progress-bar bg-info" role="progressbar" style="width: {{ balance.sick_leave_balance|floatformat:0 }}%;" aria-valuenow="{{ balance.sick_leave_balance|floatformat:0 }}" aria-valuemin="0" aria-valuemax="10">
+                            {{ balance.sick_leave_balance }} / 10
+                        </div>
+                    </div>
+                    <p class="text-muted small">Sick leave can be used when you're ill or need to attend medical appointments.</p>
+                </div>
+                <div class="card-footer">
+                    <a href="{% url 'leave_request_create' %}" class="btn btn-sm btn-outline-info w-100">
+                        <i class="bi bi-calendar-plus me-1"></i> Request Sick Leave
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0">Personal Leave</h5>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-3">
+                        <div class="display-4 fw-bold">{{ balance.personal_leave_balance }}</div>
+                        <p class="text-muted">days remaining</p>
+                        <p class="text-muted small">({{ balance.personal_leave_hours }} hours)</p>
+                    </div>
+                    <div class="progress mb-3">
+                        <div class="progress-bar bg-warning" role="progressbar" style="width: {{ balance.personal_leave_balance|floatformat:0 }}%;" aria-valuenow="{{ balance.personal_leave_balance|floatformat:0 }}" aria-valuemin="0" aria-valuemax="5">
+                            {{ balance.personal_leave_balance }} / 5
+                        </div>
+                    </div>
+                    <p class="text-muted small">Personal leave can be used for personal matters that require time off work.</p>
+                </div>
+                <div class="card-footer">
+                    <a href="{% url 'leave_request_create' %}" class="btn btn-sm btn-outline-warning w-100">
+                        <i class="bi bi-calendar-plus me-1"></i> Request Personal Leave
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mt-2">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">
+                <i class="bi bi-info-circle me-2"></i>Leave Policy Information
+            </h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4 mb-3 mb-md-0">
+                    <h6>Annual Leave</h6>
+                    <ul class="small">
+                        <li>20 days per year</li>
+                        <li>Accrues monthly</li>
+                        <li>Can carry over up to 5 days</li>
+                        <li>Request at least 2 weeks in advance</li>
+                    </ul>
+                </div>
+                
+                <div class="col-md-4 mb-3 mb-md-0">
+                    <h6>Sick Leave</h6>
+                    <ul class="small">
+                        <li>10 days per year</li>
+                        <li>Accrues monthly</li>
+                        <li>Doctor's note required for 3+ consecutive days</li>
+                        <li>Notify manager as soon as possible</li>
+                    </ul>
+                </div>
+                
+                <div class="col-md-4">
+                    <h6>Personal Leave</h6>
+                    <ul class="small">
+                        <li>5 days per year</li>
+                        <li>Available from start of year</li>
+                        <li>Does not carry over</li>
+                        <li>Request at least 3 days in advance when possible</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

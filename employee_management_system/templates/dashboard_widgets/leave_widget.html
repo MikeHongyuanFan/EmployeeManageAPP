@@ -1,0 +1,40 @@
+<div class="card dashboard-card h-100">
+    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+        <h5 class="card-title mb-0">
+            <i class="bi bi-calendar-minus me-2"></i> Leave Requests
+        </h5>
+        <a href="{% url 'leave_request_list' %}" class="btn btn-sm btn-outline-light">View All</a>
+    </div>
+    <div class="card-body p-0">
+        <ul class="list-group list-group-flush">
+            {% if pending_leave_requests %}
+                {% for leave in pending_leave_requests %}
+                    <li class="list-group-item">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="mb-1">{{ leave.get_leave_type_display }}</h6>
+                                <p class="mb-1 text-muted small">
+                                    {{ leave.start_date|date:"M d, Y" }} - {{ leave.end_date|date:"M d, Y" }}
+                                    ({{ leave.get_days }} days)
+                                </p>
+                                <span class="badge status-badge status-{{ leave.status }}">{{ leave.get_status_display }}</span>
+                            </div>
+                            <a href="{% url 'leave_request_detail' leave.id %}" class="btn btn-sm btn-outline-primary">
+                                View
+                            </a>
+                        </div>
+                    </li>
+                {% endfor %}
+            {% else %}
+                <li class="list-group-item text-center py-4">
+                    <p class="text-muted mb-0">No pending leave requests</p>
+                </li>
+            {% endif %}
+        </ul>
+    </div>
+    <div class="card-footer text-center">
+        <a href="{% url 'leave_request_create' %}" class="btn btn-sm btn-outline-primary">
+            <i class="bi bi-plus-circle me-1"></i> Request Leave
+        </a>
+    </div>
+</div>

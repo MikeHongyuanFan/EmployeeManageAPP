@@ -1,0 +1,158 @@
+# 📱 Project Plan: Leave Management Mobile App (Flutter + Existing Django Backend)
+
+## 🎯 Goal
+Develop a **Flutter-based mobile application** that integrates with the existing **Django-powered Employee Management System**. The app will mirror and extend core functionalities available on the web version, including leave management, WFH requests, task tracking, document handling, and working time logging. It will connect to the live backend and update data per user actions.
+
+---
+
+## 🔧 Backend Integration
+
+### ✅ Requirements:
+- Reuse the current Django backend
+- Expose features via **Django REST Framework (DRF)** APIs
+- CORS enabled for mobile access
+
+### ✅ API Endpoints Required:
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| /api/login/ | POST | User login |
+| /api/profile/ | GET | Fetch user info |
+| /api/leave-requests/ | GET, POST | Leave submission/history |
+| /api/wfh-requests/ | GET, POST | WFH request handling |
+| /api/leave-balance/ | GET | Current leave balance |
+| /api/tasks/ | GET, POST, PATCH | Task management |
+| /api/working-hours/ | POST | Track arrival/WFH time |
+| /api/meetings/ | GET | Calendar meetings |
+| /api/documents/ | GET, POST | File/document access |
+| /api/notifications/ | GET | Real-time events |
+
+---
+
+## 📲 Mobile App Features
+
+### 🔐 Authentication
+- Login screen (username + password)
+- Secure token storage (`shared_preferences` or `flutter_secure_storage`)
+
+### 🧑‍💼 Employee Interface
+- Dashboard widgets: leave balance, task alerts, WFH status
+- Submit and view leave/WFH requests
+- Clock-in working/WFH hours
+- Personal task creation and tracking
+- Read-only calendar for meetings/events
+- Upload and view documents
+- View earned bonus hours from work time
+
+### 👨‍💼 Manager Interface (role-based access)
+- Employee list and profiles
+- Approve/reject leave/WFH requests
+- Assign/manage tasks (with deadlines and priority)
+- Create/edit/cancel meetings
+- Access shared documents
+- Review working hour logs and reports
+
+---
+
+## 🧱 App Structure
+
+### 🔁 State Management
+- Use `Provider` or `Riverpod`
+
+### 📂 Suggested Folder Layout:
+```
+/lib
+├── main.dart
+├── models/
+├── screens/
+│   ├── login_screen.dart
+│   ├── employee_dashboard.dart
+│   ├── manager_dashboard.dart
+│   ├── leave_request.dart
+│   ├── wfh_request.dart
+│   ├── meetings.dart
+│   ├── tasks.dart
+│   ├── documents.dart
+│   └── profile.dart
+├── services/
+│   └── api_service.dart
+├── widgets/
+└── utils/
+```
+
+### 📦 Dependencies:
+- `http` – API interaction
+- `provider` – State management
+- `shared_preferences` / `flutter_secure_storage` – Auth
+- `table_calendar` – Calendar features
+- `file_picker`, `path_provider` – Document upload/download
+- `fl_chart` – Data visualization
+
+---
+
+## 🧪 Testing & Simulators
+
+### ✅ Android Emulator
+- Setup via **Android Studio** → Device Manager → Create emulator
+- Run:
+```bash
+flutter run
+```
+
+### ✅ iOS Simulator (Mac only)
+- Install **Xcode** (no Apple developer account needed for simulator)
+- Open Simulator via Xcode → Devices
+- Run:
+```bash
+flutter run -d iOS
+```
+
+### ✅ Chrome/Web (Optional)
+- Run app in browser (mobile view simulation):
+```bash
+flutter run -d chrome
+```
+
+---
+
+## 🔄 Live Sync with Django Backend
+- All data updates via API sync to the same production database
+- Realtime-like updates using polling or push notifications (future)
+
+---
+
+## 🚀 Roadmap Based on Web App Status
+
+### ✅ Already Implemented in Django:
+- Authentication
+- User profiles & roles
+- Leave management
+- WFH management
+- Calendar (meetings, leave, WFH)
+- Task management
+- Document storage
+- Notifications
+- Working time logging
+
+### 🔜 Mobile App Should Mirror:
+- All core dashboard features
+- Leave/WFH request forms
+- Task & meeting views
+- Document interaction
+- Profile management
+
+### 🔮 Optional Mobile Enhancements:
+- Offline mode + data sync
+- Push notifications
+- Geolocation-based clock-in
+- In-app reporting (charts, stats)
+
+---
+
+## 🧭 Final Notes
+- Reuse Django backend logic + database
+- Keep mobile app modular to match current system
+- Simulate on emulator before real device testing
+- Securely handle login and API calls
+
+Let me know if you'd like the Flutter starter project or sample code scaffold!
+

@@ -1,0 +1,153 @@
+{% extends 'base.html' %}
+
+{% block title %}My Profile{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="card-title mb-0">Profile Information</h5>
+                </div>
+                <div class="card-body text-center">
+                    {% if user.profile_picture %}
+                        <img src="{{ user.profile_picture.url }}" alt="Profile Picture" class="rounded-circle img-fluid mb-3" style="max-width: 150px;">
+                    {% else %}
+                        <div class="bg-light rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 150px; height: 150px;">
+                            <i class="bi bi-person-circle" style="font-size: 5rem;"></i>
+                        </div>
+                    {% endif %}
+                    <h4>{{ user.get_full_name }}</h4>
+                    <p class="text-muted">{{ user.get_user_type_display }}</p>
+                    <p class="text-muted">{{ user.get_department_display|default:"No Department" }}</p>
+                </div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span><i class="bi bi-envelope me-2"></i> Email:</span>
+                        <span>{{ user.email }}</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span><i class="bi bi-telephone me-2"></i> Phone:</span>
+                        <span>{{ user.phone_number|default:"Not provided" }}</span>
+                    </li>
+                    {% if user.manager %}
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span><i class="bi bi-person-badge me-2"></i> Manager:</span>
+                        <span>{{ user.manager.get_full_name }}</span>
+                    </li>
+                    {% endif %}
+                    {% if user.hire_date %}
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span><i class="bi bi-calendar-check me-2"></i> Hire Date:</span>
+                        <span>{{ user.hire_date }}</span>
+                    </li>
+                    {% endif %}
+                </ul>
+                <div class="card-footer">
+                    <a href="{% url 'change_password' %}" class="btn btn-outline-primary w-100">Change Password</a>
+                </div>
+            </div>
+            
+            {% if user.get_leave_balance %}
+            <div class="card mb-4">
+                <div class="card-header bg-info text-white">
+                    <h5 class="card-title mb-0">Leave Balance</h5>
+                </div>
+                <div class="card-body p-0">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>Annual Leave:</span>
+                            <span class="badge bg-primary">{{ user.get_leave_balance.annual_leave_balance }} days</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>Sick Leave:</span>
+                            <span class="badge bg-primary">{{ user.get_leave_balance.sick_leave_balance }} days</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>Personal Leave:</span>
+                            <span class="badge bg-primary">{{ user.get_leave_balance.personal_leave_balance }} days</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="card-title mb-0">Edit Profile</h5>
+                </div>
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="{{ form.first_name.id_for_label }}" class="form-label">First Name</label>
+                                {{ form.first_name }}
+                                {% if form.first_name.errors %}
+                                    <div class="text-danger">{{ form.first_name.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6">
+                                <label for="{{ form.last_name.id_for_label }}" class="form-label">Last Name</label>
+                                {{ form.last_name }}
+                                {% if form.last_name.errors %}
+                                    <div class="text-danger">{{ form.last_name.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="{{ form.email.id_for_label }}" class="form-label">Email</label>
+                            {{ form.email }}
+                            {% if form.email.errors %}
+                                <div class="text-danger">{{ form.email.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="{{ form.phone_number.id_for_label }}" class="form-label">Phone Number</label>
+                            {{ form.phone_number }}
+                            {% if form.phone_number.errors %}
+                                <div class="text-danger">{{ form.phone_number.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="{{ form.address.id_for_label }}" class="form-label">Address</label>
+                            {{ form.address }}
+                            {% if form.address.errors %}
+                                <div class="text-danger">{{ form.address.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="{{ form.emergency_contact.id_for_label }}" class="form-label">Emergency Contact</label>
+                            {{ form.emergency_contact }}
+                            <div class="form-text">Name and phone number of emergency contact</div>
+                            {% if form.emergency_contact.errors %}
+                                <div class="text-danger">{{ form.emergency_contact.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="{{ form.profile_picture.id_for_label }}" class="form-label">Profile Picture</label>
+                            {{ form.profile_picture }}
+                            {% if form.profile_picture.errors %}
+                                <div class="text-danger">{{ form.profile_picture.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">Update Profile</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

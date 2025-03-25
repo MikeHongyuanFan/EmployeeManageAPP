@@ -1,0 +1,41 @@
+<div class="card dashboard-card h-100">
+    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+        <h5 class="card-title mb-0">
+            <i class="bi bi-people me-2"></i> Upcoming Meetings
+        </h5>
+        <a href="{% url 'calendar_view' %}" class="btn btn-sm btn-outline-light">View All</a>
+    </div>
+    <div class="card-body p-0">
+        <ul class="list-group list-group-flush">
+            {% if upcoming_meetings %}
+                {% for meeting in upcoming_meetings %}
+                    <li class="list-group-item">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="mb-1">{{ meeting.title }}</h6>
+                                <p class="mb-1 text-muted small">
+                                    {{ meeting.start_time|date:"M d, Y, H:i" }} - {{ meeting.end_time|date:"H:i" }}
+                                </p>
+                                <p class="mb-1 text-muted small">
+                                    <i class="bi bi-geo-alt me-1"></i> {{ meeting.location|default:"Online" }}
+                                </p>
+                            </div>
+                            <a href="{% url 'meeting_detail' meeting.id %}" class="btn btn-sm btn-outline-primary">
+                                View
+                            </a>
+                        </div>
+                    </li>
+                {% endfor %}
+            {% else %}
+                <li class="list-group-item text-center py-4">
+                    <p class="text-muted mb-0">No upcoming meetings</p>
+                </li>
+            {% endif %}
+        </ul>
+    </div>
+    <div class="card-footer text-center">
+        <a href="{% url 'meeting_create' %}" class="btn btn-sm btn-outline-primary">
+            <i class="bi bi-plus-circle me-1"></i> Schedule Meeting
+        </a>
+    </div>
+</div>

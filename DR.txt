@@ -1,0 +1,202 @@
+# Employee Leave Management System
+
+## Overview
+This project is a basic **Employee Leave Management System** that allows employees to request leave and managers to approve or reject requests. Additionally, it includes a **calendar system for managing meetings**, a **task management system**, a **document and file management system**, and a **work from home (WFH) request and tracking system**. The system will be built using **HTML, CSS, and JavaScript** without TypeScript or Next.js.
+
+## Features
+
+### 1️⃣ User Roles
+- **Employee**
+  - Can submit leave requests (Sick Leave, Annual Leave, etc.).
+  - Can request Work From Home (WFH) days.
+  - Can view leave history and remaining leave balance.
+  - Can view scheduled meetings in a **read-only** calendar.
+  - Can **create tasks and mark them as completed**.
+  - Can **upload leave-related documents** (e.g., medical certificates).
+  - Can **track WFH presence and working time** once WFH request is approved.
+- **Manager**
+  - Can view all employees.
+  - Can see a list of leave and WFH requests and approve/reject them.
+  - Can track employee arrival time and working hours.
+  - Can **create, edit, and cancel meetings** via the calendar system.
+  - Can **assign tasks to employees** and set priority levels.
+  - Can **upload and manage company documents** (e.g., policies, training materials).
+
+### 2️⃣ Leave Request System
+- Each employee starts with **200 leave hours**.
+- Leave requests **deduct** hours based on the selected type.
+- A manager can **approve or reject** leave requests.
+
+### 3️⃣ Working Time & Bonus System
+- The manager clicks an **"Arrived"** button when an employee starts working.
+- The system calculates the total working hours.
+- Employees **earn 1 bonus hour of leave** for every **30 hours** worked on-site.
+
+### 4️⃣ Work From Home (WFH) Request & Tracking System
+- Employees can **submit WFH requests** for specific dates.
+- Managers can **approve or reject** WFH requests.
+- Once approved, employees can **track their WFH working hours**.
+- WFH working time is **categorized separately**.
+- Employees **earn 1 bonus hour of leave** for every **45 hours of WFH work**, which contributes to their general leave balance (can be used as sick or annual leave).
+
+### 5️⃣ Meeting & Calendar System
+- **Meeting Types:** Zoom Meeting, Face-to-Face Meeting.
+- **Manager Features:**
+  - Create meeting events.
+  - Invite employees or other managers.
+  - View scheduled meetings in a calendar interface.
+  - **Edit meeting time**.
+  - **Cancel meetings** via a pop-up interface.
+- **Employee Features:**
+  - Can view scheduled meetings in a **read-only** mode.
+  - The calendar will display **meeting time, type, and participants**.
+
+### 6️⃣ Task Management System
+- **Employee Features:**
+  - Can create personal tasks and mark them as completed.
+  - View a task list with status (Pending, In Progress, Completed).
+- **Manager Features:**
+  - Can assign tasks to employees.
+  - Set task priority levels (**High, Medium, Low**).
+  - Set **task deadlines** with reminders.
+
+### 7️⃣ Document & File Management System
+- **Employee Features:**
+  - Upload supporting documents for leave requests (e.g., medical certificates).
+  - View previously uploaded documents.
+- **Manager Features:**
+  - Upload and manage company documents (e.g., policy files, training manuals).
+  - View and download documents uploaded by employees.
+- **System Capabilities:**
+  - Simple file upload interface using HTML `<input type="file">`.
+  - Basic viewer and download buttons for accessing files.
+  - JavaScript to manage uploaded files locally (or via backend storage if implemented).
+
+### 8️⃣ Different Views for Employees & Managers
+- **Employee Dashboard** → Submit leave and WFH requests, view leave status & balance, manage tasks, track WFH hours, see meetings on the calendar, and upload documents.
+- **Manager Dashboard** → View all employees, manage leave and WFH requests, track working hours, manage meetings, assign tasks, and manage company documents.
+
+### 9️⃣ Authentication (Basic Implementation)
+- Simple login system with username and password.
+- Role-based navigation (Employee vs. Manager).
+
+---
+
+## 🔧 Technology Stack
+- **Frontend:** HTML, CSS, JavaScript (No frameworks required).
+- **Backend (Optional for Future Expansion):** Firebase or Django REST Framework (for data storage and authentication).
+
+---
+
+## 🚀 Project Breakdown: Tasks & Milestones
+
+### 📌 Phase 1: Setup & Project Structure
+#### ✅ Tasks:
+1. **Create Project Folder Structure**
+   ```
+   /employee-leave-management
+   ├── index.html   # Main entry file
+   ├── styles.css   # Stylesheet for UI
+   ├── script.js    # JavaScript file for logic
+   ├── assets/      # Images and icons
+   ├── pages/
+   │   ├── login.html
+   │   ├── employee-dashboard.html
+   │   ├── manager-dashboard.html
+   │   ├── calendar.html  # Calendar system interface
+   │   ├── tasks.html     # Task management interface
+   │   ├── documents.html # Document upload and management
+   │   ├── wfh.html       # WFH request and tracking interface
+   ```
+2. **Basic HTML Pages**
+   - Login Page
+   - Employee Dashboard
+   - Manager Dashboard
+   - Calendar Interface
+   - Task Management Interface
+   - Document Upload Interface
+   - WFH Interface
+
+---
+
+### 📌 Phase 2: User Authentication System
+#### ✅ Tasks:
+1. **Create a Login Page (login.html)**
+   - Employees and Managers will log in using a **username & password**.
+   - Use JavaScript to check roles and redirect accordingly.
+
+---
+
+### 📌 Phase 3: Employee Dashboard
+#### ✅ Tasks:
+1. **Create Leave Request Form**
+   - Fields: **Leave Type (Dropdown), Number of Hours, Reason**.
+   - Validate inputs (cannot request more than the remaining leave balance).
+2. **Show Leave Balance**
+   - Display remaining hours (e.g., `Sick Leave: 80h left`).
+3. **Show Leave History**
+   - List past leave requests with status (Pending, Approved, Rejected).
+4. **Integrate Calendar for Read-Only Meeting View**
+   - Display scheduled meetings (date, time, type, participants).
+5. **Integrate Task Management**
+   - Employees can create tasks, set priorities, and mark them as completed.
+6. **Integrate Document Upload Feature**
+   - Allow employees to upload and view leave-related documents.
+7. **Integrate WFH Request and Tracking**
+   - Allow employees to submit WFH requests and track WFH hours after approval.
+   - Automatically calculate bonus leave after every 45 hours of WFH work.
+
+---
+
+### 📌 Phase 4: Manager Dashboard
+#### ✅ Tasks:
+1. **Display Employee List**
+   - Show **employee name, total leave balance, pending leave and WFH requests**.
+2. **Show Leave & WFH Requests Table**
+   - Columns: Employee Name, Type, Requested Hours/Date, Status.
+3. **Approve / Reject Buttons**
+   - Update the leave and WFH request status when the manager clicks **Approve** or **Reject**.
+4. **Track Employee Arrival & Work Time**
+   - Add an **"Arrived"** button next to each employee.
+   - Track working hours and grant bonus leave.
+5. **Integrate Task Management**
+   - Managers can assign tasks to employees and set deadlines.
+   - Employees will receive task notifications.
+6. **Integrate Document Management**
+   - Allow managers to upload and view shared documents.
+   - Provide download access to employee-uploaded files.
+7. **Integrate WFH Review System**
+   - View and manage WFH request approvals.
+   - Access WFH work time logs and bonus hours earned by employees.
+
+---
+
+### 📌 Phase 5: Meeting & Calendar System
+#### ✅ Tasks:
+1. **Create a Calendar Interface (calendar.html)**
+   - Employees can view their scheduled meetings (read-only).
+   - Managers can create, edit, and cancel meetings.
+
+---
+
+## 🎨 UI Plan
+- **Login Page** → Simple login form.
+- **Employee Dashboard**
+  - Show **leave and WFH balance**.
+  - Submit leave and WFH requests.
+  - View scheduled meetings (read-only).
+  - Manage tasks (create, update, mark complete).
+  - Upload and view personal documents.
+  - Track WFH working hours (after approval).
+- **Manager Dashboard**
+  - List of **employees** and their remaining leave/WFH balance.
+  - **Pending leave and WFH requests** with Approve/Reject buttons.
+  - **Manage meetings in the calendar**.
+  - **Assign tasks to employees**.
+  - **Upload company documents and access employee files**.
+  - **Monitor WFH presence logs**.
+- **Calendar Interface**
+  - Employees: Read-only.
+  - Managers: Can **create, edit, and cancel meetings**.
+
+---

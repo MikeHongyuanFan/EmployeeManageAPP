@@ -1,0 +1,51 @@
+<div class="card h-100">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">Working Time</h5>
+        <a href="{% url 'track_working_time' %}" class="btn btn-sm btn-outline-primary">Log Hours</a>
+    </div>
+    <div class="card-body">
+        <div class="mb-3">
+            <h6>Today's Hours</h6>
+            {% if today_working_time %}
+                <div class="d-flex justify-content-between align-items-center">
+                    <span>{{ today_working_time.hours_worked }} hours</span>
+                    <span class="badge bg-success">Logged</span>
+                </div>
+                {% if today_working_time.description %}
+                    <small class="text-muted">{{ today_working_time.description|truncatechars:100 }}</small>
+                {% endif %}
+            {% else %}
+                <div class="d-flex justify-content-between align-items-center">
+                    <span>No hours logged</span>
+                    <a href="{% url 'track_working_time' %}" class="btn btn-sm btn-primary">Log Now</a>
+                </div>
+            {% endif %}
+        </div>
+        
+        <div>
+            <h6>This Week</h6>
+            <div class="progress mb-2">
+                <div class="progress-bar" role="progressbar" style="width: {{ week_hours|floatformat:0 }}%;" 
+                     aria-valuenow="{{ week_hours|floatformat:0 }}" aria-valuemin="0" aria-valuemax="40">
+                    {{ week_hours|floatformat:1 }} / 40
+                </div>
+            </div>
+            <small class="text-muted">{{ week_hours|floatformat:1 }} hours of 40 hour target</small>
+        </div>
+    </div>
+</div>
+
+{% if user.is_hr_or_admin %}
+<div class="card mt-3">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">Admin Actions</h5>
+    </div>
+    <div class="card-body">
+        <div class="d-grid gap-2">
+            <a href="{% url 'register_manager' %}" class="btn btn-outline-primary">
+                <i class="bi bi-person-plus me-2"></i>Register New Manager
+            </a>
+        </div>
+    </div>
+</div>
+{% endif %}

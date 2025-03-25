@@ -1,0 +1,87 @@
+{% load static %}
+
+<div class="card dashboard-card h-100">
+    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+        <h5 class="card-title mb-0">
+            <i class="bi bi-calendar-week me-2"></i> Upcoming Events
+        </h5>
+        <a href="{% url 'calendar_view' %}" class="btn btn-sm btn-outline-light">View All</a>
+    </div>
+    <div class="card-body p-0">
+        <div id="mini-calendar"></div>
+    </div>
+</div>
+
+{% block extra_js %}
+<link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.css' rel='stylesheet' />
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.js'></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var calendarEl = document.getElementById('mini-calendar');
+        
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: ''
+            },
+            height: 'auto',
+            events: [
+                {% for leave in user.leave_requests.all %}
+                    {% if leave.status == 'approved' %}
+                    {
+                        title: 'Leave: {{ leave.get_leave_type_display }}',
+                        start: '{{ leave.start_date|date:"Y-m-d" }}',
+                        end: '{{ leave.end_date|date:"Y-m-d" }}',
+                        url: '{% url "leave_request_detail" leave.id %}',
+                        classNames: ['leave-event']
+                    },
+                    {% endif %}
+                {% endfor %}
+                
+                {% for wfh in user.wfh_requests.all %}
+                    {% if wfh.status == 'approved' %}
+                    {
+                        title: 'WFH',
+                        start: '{{ wfh.date|date:"Y-m-d" }}',
+                        url: '{% url "wfh_request_detail" wfh.id %}',
+                        classNames: ['wfh-event']
+                    },
+                    {% endif %}
+                {% endfor %}
+                
+                {% for meeting in user.meetings.all %}
+                    {
+                        title: '{{ meeting.title }}',
+                        start: '{{ meeting.start_time|date:"Y-m-d\\TH:i:s" }}',
+                        end: '{{ meeting.end_time|date:"Y-m-d\\TH:i:s" }}',
+                        url: '{% url "meeting_detail" meeting.id %}',
+                        classNames: ['meeting-event']
+                    },
+                {% endfor %}
+                
+                {% for task in user.assigned_tasks.all %}
+                    {% if task.deadline %}
+                    {
+                        title: 'Task: {{ task.title }}',
+                        start: '{{ task.deadline|date:"Y-m-d" }}',
+                        url: '{% url "task_detail" task.id %}',
+                        classNames: ['task-event']
+                    },
+                    {% endif %}
+                {% endfor %}
+            ],
+            eventClick: function(info) {
+                if (info.event.url) {
+                    window.location.href = info.event.url;
+                    return false;
+                }
+            }
+        });
+        
+        calendar.render();
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,52 @@
+<div class="card dashboard-card h-100">
+    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+        <h5 class="card-title mb-0">
+            <i class="bi bi-check2-square me-2"></i> My Tasks
+        </h5>
+        <a href="{% url 'task_list' %}" class="btn btn-sm btn-outline-light">View All</a>
+    </div>
+    <div class="card-body p-0">
+        <ul class="list-group list-group-flush">
+            {% if assigned_tasks %}
+                {% for task in assigned_tasks %}
+                    <li class="list-group-item task-list-item {% if task.priority == 'high' %}priority-high{% elif task.priority == 'medium' %}priority-medium{% else %}priority-low{% endif %}">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="mb-1">{{ task.title }}</h6>
+                                <p class="mb-1 text-muted small">{{ task.description|truncatechars:50 }}</p>
+                                <div>
+                                    <span class="badge bg-secondary">{{ task.get_priority_display }}</span>
+                                    {% if task.deadline %}
+                                        <span class="badge {% if task.is_overdue %}bg-danger{% else %}bg-info{% endif %}">
+                                            <i class="bi bi-calendar-event me-1"></i> {{ task.deadline|date:"M d, Y" }}
+                                        </span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div>
+                                <form id="task-form-{{ task.id }}" method="post" action="{% url 'task_complete' task.id %}">
+                                    {% csrf_token %}
+                                    <div class="form-check">
+                                        <input class="form-check-input task-checkbox" type="checkbox" id="task-checkbox-{{ task.id }}" data-task-id="{{ task.id }}" {% if task.status == 'completed' %}checked{% endif %}>
+                                        <label class="form-check-label" for="task-checkbox-{{ task.id }}">
+                                            Complete
+                                        </label>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </li>
+                {% endfor %}
+            {% else %}
+                <li class="list-group-item text-center py-4">
+                    <p class="text-muted mb-0">No tasks assigned to you</p>
+                </li>
+            {% endif %}
+        </ul>
+    </div>
+    <div class="card-footer text-center">
+        <a href="{% url 'task_create' %}" class="btn btn-sm btn-outline-primary">
+            <i class="bi bi-plus-circle me-1"></i> Add New Task
+        </a>
+    </div>
+</div>

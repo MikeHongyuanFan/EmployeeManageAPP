@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Leave Request Details{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/custom.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="bi bi-calendar-minus me-2"></i>Leave Request Details
+                    </h5>
+                    <span class="badge status-badge status-{{ leave_request.status }}">
+                        {{ leave_request.get_status_display }}
+                    </span>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h6>Leave Type</h6>
+                            <p>{{ leave_request.get_leave_type_display }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Duration</h6>
+                            <p>{{ leave_request.get_days }} day(s) ({{ leave_request.get_hours }} hours)</p>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h6>Start Date</h6>
+                            <p>{{ leave_request.start_date|date:"F d, Y" }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>End Date</h6>
+                            <p>{{ leave_request.end_date|date:"F d, Y" }}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <h6>Reason</h6>
+                        <p>{{ leave_request.reason }}</p>
+                    </div>
+                    
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h6>Submitted On</h6>
+                            <p>{{ leave_request.created_at|date:"F d, Y H:i" }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            {% if leave_request.processed_at %}
+                                <h6>Processed On</h6>
+                                <p>{{ leave_request.processed_at|date:"F d, Y H:i" }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    {% if leave_request.processed_by %}
+                        <div class="mb-4">
+                            <h6>Processed By</h6>
+                            <p>{{ leave_request.processed_by.get_full_name }}</p>
+                        </div>
+                    {% endif %}
+                    
+                    {% if leave_request.rejection_reason %}
+                        <div class="mb-4">
+                            <h6>Rejection Reason</h6>
+                            <div class="alert alert-danger">
+                                {{ leave_request.rejection_reason }}
+                            </div>
+                        </div>
+                    {% endif %}
+                    
+                    <div class="d-flex justify-content-between">
+                        <a href="{% url 'leave_request_list' %}" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left me-1"></i>Back to Leave Requests
+                        </a>
+                        
+                        {% if leave_request.status == 'pending' %}
+                            <a href="{% url 'leave_request_cancel' leave_request.id %}" class="btn btn-danger" onclick="return confirm('Are you sure you want to cancel this leave request?')">
+                                <i class="bi bi-x-circle me-1"></i>Cancel Request
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

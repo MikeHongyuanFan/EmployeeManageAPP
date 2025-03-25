@@ -1,0 +1,171 @@
+{% extends 'base.html' %}
+
+{% block title %}Document: {{ document.title }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Document Details</h1>
+        <div>
+            <a href="{% url 'document_list' %}" class="btn btn-secondary">Back to Documents</a>
+        </div>
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="card mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">
+                {{ document.title }}
+                {% if document.is_public %}<span class="badge bg-info ms-2">Public</span>{% endif %}
+            </h5>
+            <div>
+                <a href="{% url 'document_download' document.pk %}" class="btn btn-sm btn-primary">
+                    <i class="bi bi-download"></i> Download
+                </a>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row mb-3">
+                <div class="col-md-3 fw-bold">Description:</div>
+                <div class="col-md-9">{{ document.description|linebreaks|default:"No description provided." }}</div>
+            </div>
+            
+            <div class="row mb-3">
+                <div class="col-md-3 fw-bold">Category:</div>
+                <div class="col-md-9">
+                    {% if document.category %}
+                        <span class="badge bg-secondary">{{ document.category.name }}</span>
+                    {% else %}
+                        <span class="text-muted">Uncategorized</span>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="row mb-3">
+                <div class="col-md-3 fw-bold">File Type:</div>
+                <div class="col-md-9">{{ document.file_extension|upper }}</div>
+            </div>
+            
+            <div class="row mb-3">
+                <div class="col-md-3 fw-bold">File Size:</div>
+                <div class="col-md-9">{{ document.file_size_display }}</div>
+            </div>
+            
+            <div class="row mb-3">
+                <div class="col-md-3 fw-bold">Uploaded By:</div>
+                <div class="col-md-9">{{ document.uploaded_by.get_full_name }}</div>
+            </div>
+            
+            <div class="row mb-3">
+                <div class="col-md-3 fw-bold">Uploaded On:</div>
+                <div class="col-md-9">{{ document.uploaded_at|date:"F d, Y - H:i" }}</div>
+            </div>
+            
+            {% if document.updated_at and document.updated_at != document.uploaded_at %}
+            <div class="row mb-3">
+                <div class="col-md-3 fw-bold">Last Updated:</div>
+                <div class="col-md-9">{{ document.updated_at|date:"F d, Y - H:i" }}</div>
+            </div>
+            {% endif %}
+            
+            {% if not document.is_public %}
+            <div class="row mb-3">
+                <div class="col-md-3 fw-bold">Access:</div>
+                <div class="col-md-9">
+                    <p>This document is private and accessible only to:</p>
+                    <ul>
+                        <li>{{ document.uploaded_by.get_full_name }} (Uploader)</li>
+                        {% for user in document.accessible_to.all %}
+                            <li>{{ user.get_full_name }}</li>
+                        {% endfor %}
+                        {% if user.is_manager or user.is_superuser %}
+                            <li>All managers and administrators</li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        <div class="card-footer">
+            <div class="btn-group">
+                {% if user == document.uploaded_by or user.is_manager or user.is_superuser %}
+                    <a href="{% url 'document_edit' document.pk %}" class="btn btn-secondary">Edit Document</a>
+                    <a href="{% url 'document_delete' document.pk %}" class="btn btn-danger">Delete Document</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Comments Section -->
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">Comments</h5>
+        </div>
+        <div class="card-body">
+            <form method="post" action="{% url 'document_comment' document.pk %}" class="mb-4">
+                {% csrf_token %}
+                <div class="mb-3">
+                    {{ comment_form.text }}
+                    {% if comment_form.text.errors %}
+                        <div class="invalid-feedback d-block">
+                            {% for error in comment_form.text.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                    <button type="submit" class="btn btn-primary">Add Comment</button>
+                </div>
+            </form>
+
+            <hr>
+
+            {% if comments %}
+                {% for comment in comments %}
+                    <div class="card mb-3">
+                        <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>{{ comment.user.get_full_name }}</strong>
+                                <span class="text-muted ms-2">{{ comment.created_at|date:"F d, Y - H:i" }}</span>
+                            </div>
+                            {% if user == comment.user or user == document.uploaded_by or user.is_manager or user.is_superuser %}
+                                <form method="post" action="{% url 'comment_delete' comment.pk %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                                </form>
+                            {% endif %}
+                        </div>
+                        <div class="card-body">
+                            {{ comment.text|linebreaks }}
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p class="text-muted">No comments yet.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Add Bootstrap classes to form fields
+    document.addEventListener('DOMContentLoaded', function() {
+        const commentTextarea = document.querySelector('#id_text');
+        if (commentTextarea) {
+            commentTextarea.classList.add('form-control');
+            commentTextarea.setAttribute('placeholder', 'Add a comment...');
+        }
+    });
+</script>
+{% endblock %}
