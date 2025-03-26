@@ -136,6 +136,35 @@ class _EmployeeDashboardState extends State<EmployeeDashboard> {
       ProfileScreen(apiService: widget.apiService),
     ];
     
+    // Make sure _selectedIndex is within valid range
+    if (_selectedIndex >= _screens.length) {
+      _selectedIndex = 0;
+    }
+    
+    // Define bottom navigation items
+    final bottomNavItems = const [
+      BottomNavigationBarItem(
+        icon: Icon(Icons.dashboard),
+        label: 'Dashboard',
+      ),
+      BottomNavigationBarItem(
+        icon: Icon(Icons.event_busy),
+        label: 'Leave',
+      ),
+      BottomNavigationBarItem(
+        icon: Icon(Icons.home_work),
+        label: 'WFH',
+      ),
+      BottomNavigationBarItem(
+        icon: Icon(Icons.assignment),
+        label: 'Tasks',
+      ),
+      BottomNavigationBarItem(
+        icon: Icon(Icons.event),
+        label: 'Meetings',
+      ),
+    ];
+    
     return Scaffold(
       appBar: AppBar(
         title: Text('Employee Dashboard'),
@@ -149,35 +178,14 @@ class _EmployeeDashboardState extends State<EmployeeDashboard> {
       ),
       body: _screens[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
+        currentIndex: _selectedIndex < bottomNavItems.length ? _selectedIndex : 0,
         onTap: (index) {
           setState(() {
             _selectedIndex = index;
           });
         },
         type: BottomNavigationBarType.fixed,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.dashboard),
-            label: 'Dashboard',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.event_busy),
-            label: 'Leave',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home_work),
-            label: 'WFH',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.assignment),
-            label: 'Tasks',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.event),
-            label: 'Meetings',
-          ),
-        ],
+        items: bottomNavItems,
       ),
       drawer: Drawer(
         child: ListView(
