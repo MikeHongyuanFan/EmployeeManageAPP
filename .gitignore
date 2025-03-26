@@ -4,31 +4,37 @@ __pycache__/
 *$py.class
 *.so
 .Python
-env/
 build/
 develop-eggs/
 dist/
 downloads/
 eggs/
 .eggs/
-lib/
-lib64/
 parts/
 sdist/
 var/
+wheels/
 *.egg-info/
 .installed.cfg
 *.egg
-venv/
-backend/venv/
+MANIFEST
 
 # Django
 *.log
 local_settings.py
 db.sqlite3
-media/
+db.sqlite3-journal
+media
 
-# Flutter/Dart
+# Virtual Environment
+backend/venv/
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Flutter/Dart (excluding lib directory)
 .dart_tool/
 .flutter-plugins
 .flutter-plugins-dependencies
@@ -36,19 +42,18 @@ media/
 .pub-cache/
 .pub/
 build/
-ios/Pods/
-android/.gradle/
+*.lock
+# Do NOT ignore lib directory
+!mobile-flutter/employee_management_app/lib/
 
-# IDE specific files
+# IDE
 .idea/
 .vscode/
-*.iml
+*.swp
+*.swo
+*~
 
-# macOS specific
+# macOS
 .DS_Store
-
-# Local configuration
-**/ios/Flutter/Debug.xcconfig
-**/ios/Flutter/Release.xcconfig
-**/ios/Flutter/Generated.xcconfig
-**/ios/Flutter/flutter_export_environment.sh
+.AppleDouble
+.LSOverride

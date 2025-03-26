@@ -55,4 +55,6 @@ abstract class ApiServiceInterface {
   Future<String> getDocumentDownloadUrl(int documentId);
   Future<Document> shareDocument(int documentId, List<int> employeeIds);
   Future<void> deleteDocument(int documentId);
+  Future<Document> updateDocument(int documentId, Map<String, dynamic> data);
+  Future<Document> uploadDocument(Map<String, dynamic> data);
 }
