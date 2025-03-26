@@ -1,22 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:logging/logging.dart';
 import 'services/api_service.dart';
+import 'services/api_service_enhanced.dart';
 import 'services/mock_api_service.dart';
+import 'services/mock_api_service_enhanced.dart';
 import 'services/api_service_interface.dart';
 import 'screens/login_screen.dart';
 import 'screens/employee_dashboard.dart';
 import 'screens/manager_dashboard.dart';
+import 'screens/tasks_screen_enhanced.dart';
 
 // Set this to true to use mock data instead of real API
 const bool USE_MOCK_API = true;
 
+// Set this to true to use enhanced API with caching
+const bool USE_ENHANCED_API = true;
+
 void main() async {
+  // Set up logging
+  Logger.root.level = Level.INFO;
+  Logger.root.onRecord.listen((record) {
+    print('${record.level.name}: ${record.time}: ${record.message}');
+  });
+  
   WidgetsFlutterBinding.ensureInitialized();
   
   // Initialize API service
   final ApiServiceInterface apiService = USE_MOCK_API 
-      ? MockApiService() 
-      : ApiService();
+      ? (USE_ENHANCED_API ? MockApiServiceEnhanced() : MockApiService())
+      : (USE_ENHANCED_API ? ApiServiceEnhanced() : ApiService());
   
   // Check for saved API URL
   final prefs = await SharedPreferences.getInstance();
@@ -87,6 +100,7 @@ class MyApp extends StatelessWidget {
         '/manager_dashboard': (context) => ManagerDashboard(
           apiService: apiService,
         ),
+        '/tasks': (context) => TasksScreenEnhanced(apiService: apiService),
       },
     );
   }
